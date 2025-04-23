@@ -63,6 +63,11 @@ def run():
     result = ask_gemini(prompt)
     return jsonify({"result": result})
 
+@app.route("/")
+def index():
+    return "Analysis Agent is running!"
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
+    print(f"PORT env var is: {os.environ.get('PORT')}")    # Log it
     app.run(host="0.0.0.0", port=port)
