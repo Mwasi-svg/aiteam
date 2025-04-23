@@ -44,7 +44,11 @@ def ask_gemini(prompt):
     try:
         model = genai.GenerativeModel("gemini-1.5-pro-latest")
         response = model.generate_content(prompt)
-        return response.text.strip()
+        if hasattr(response, 'text') and response.text:
+            return response.text.strip()
+        else:  
+            logging.error("Empty response from Gemini.")
+            return "Warning: Empty response from Gemini."
     except Exception as e:
         logging.error(f"Gemini error: {e}")
         return f"Error: {e}"
