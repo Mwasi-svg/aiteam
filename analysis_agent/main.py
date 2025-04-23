@@ -75,4 +75,4 @@ if __name__ == "__main__":
     print(f">>> PORT env var is: {port}")  
     print(">>> Waiting 3 seconds to ensure Railway is ready...")
     time.sleep(3)  # Wait for 3 seconds
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=8080)
