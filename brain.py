@@ -2,23 +2,25 @@ import os
 import logging
 import requests
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
+CORS(app, origins=["https://turiagent.web.app"])
 logging.basicConfig(level=logging.INFO)
 
-# Agent endpoint map
+# Agent endpoint map (from Railway ENV VARs)
 AGENT_ENDPOINTS = {
-    "Market Research": "http://localhost:5001/run",
-    "Dev": "http://localhost:5002/run",
-    "Design": "http://localhost:5003/run",
-    "Analysis": "http://localhost:5004/run",
-    "Trend": "http://localhost:5005/run",
-    "Content Creation": "http://localhost:5006/run",
+    "Market Research": os.getenv("MARKET_AGENT_URL"),
+    "Dev": os.getenv("DEV_AGENT_URL"),
+    "Design": os.getenv("DESIGN_AGENT_URL"),
+    "Analysis": os.getenv("ANALYSIS_AGENT_URL"),
+    "Trend": os.getenv("TREND_AGENT_URL"),
+    "Content Creation": os.getenv("CONTENT_AGENT_URL"),
 }
 
-PM_AGENT_URL = "http://localhost:5000/run"  # PM-Agent
+PM_AGENT_URL = os.getenv("PM_AGENT_URL")
 
 def call_agent(url, task):
     try:
@@ -36,20 +38,18 @@ def execute():
 
     logging.info(f"User Goal: {user_goal}")
     
-    # Step 1: Ask PM-Agent to break down the goal
     pm_response = call_agent(PM_AGENT_URL, f"Deconstruct this goal: {user_goal}")
     logging.info(f"PM-Agent response:\n{pm_response}")
 
-    # Step 2: Parse and route subtasks (basic parsing here)
     results = {}
     for line in pm_response.split("\n"):
-        taskfound = False # Initialize for each line.
+        taskfound = False
         for agent_name, url in AGENT_ENDPOINTS.items():
             if agent_name.lower() in line.lower():
                 subtask = line.split("→")[-1].strip() if "→" in line else line.strip()
                 logging.info(f"Routing to {agent_name} → Task: {subtask}")
                 results[agent_name] = call_agent(url, subtask)
-                taskfound=True 
+                taskfound = True 
         if not taskfound:
             logging.warning(f"No agent found for task: {line.strip()}")
             results["Unassigned"] = line.strip()
