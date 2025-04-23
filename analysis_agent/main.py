@@ -3,41 +3,22 @@ import logging
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import google.generativeai as genai
+import time
 
 load_dotenv()
-genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
+genai.configure(api_key="YOUR_API_KEY")
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 SYSTEM_INSTRUCTION = """
 Role: Analysis-Agent
-
 Purpose:
 Analyze and interpret datasets, reports, and research findings.
-
 Core Functions:
 - Extract key insights from data.
 - Summarize reports or research findings.
 - Recommend actions based on patterns and trends.
 """
-# Function to list available models
-#def list_available_models():
-    #try:
-       # models = genai.ListModels()
-       # logging.info(f"Available models: {models}")
-       # return models
-   # except Exception as e:
-        #logging.error(f"Error listing models: {e}")
-        #return None
-
-# Fetch available models and log the result
-#available_models = list_available_models()
-
-# Check if models are available and log the result
-#if available_models:
-    #logging.info(f"Available models: {available_models}")
-#else:
-    #logging.error("No models found.")
 
 def ask_gemini(prompt):
     try:
@@ -67,12 +48,8 @@ def run():
 def index():
     return "Analysis Agent is running!"
 
-import time
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    print(">>> Starting Analysis Agent...")
-    print(f">>> PORT env var is: {port}")  
-    print(">>> Waiting 3 seconds to ensure Railway is ready...")
-    time.sleep(3)  # Wait for 3 seconds
-    app.run(host="0.0.0.0", port=8080)
+    port = int(os.environ.get("PORT", 8080))  # Use the port specified by Railway
+    logging.info(f"Starting the app on port {port}")
+    time.sleep(3)  # Wait for 3 seconds to ensure Railway is ready
+    app.run(host="0.0.0.0", port=port)
