@@ -67,7 +67,12 @@ def run():
 def index():
     return "Analysis Agent is running!"
 
+import time
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    print(f"PORT env var is: {os.environ.get('PORT')}")    # Log it
+    print(">>> Starting Analysis Agent...")
+    print(f">>> PORT env var is: {port}")  
+    print(">>> Waiting 3 seconds to ensure Railway is ready...")
+    time.sleep(3)  # Wait for 3 seconds
     app.run(host="0.0.0.0", port=port)
