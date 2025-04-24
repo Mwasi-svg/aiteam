@@ -18,7 +18,7 @@ AGENT_ENDPOINTS = {
     "Market Research": "https://market-agent-f9q2.onrender.com",
     "Dev": "https://dev-agent-ai-agents.up.railway.app/",
     "Design": "https://design-agent-ai-agents.up.railway.app/",
-    "Analysis":"https://analysis-agent-ai-agents.up.railway.app/",
+    "Analysis": "https://analysis-agent-ai-agents.up.railway.app/",
     "Trend": "https://trend-agent.onrender.com",
     "Content Creation": "https://content-agent-ai-agents.up.railway.app/",
 }
@@ -29,8 +29,16 @@ def call_agent(url, task):
     try:
         logging.info(f"Sending task to {url}")
         response = requests.post(url, json={"task": task})
-        return response.json().get("result", "No result returned.")
+        
+        # Check if the response is successful
+        if response.status_code == 200:
+            return response.json().get("result", "No result returned.")
+        else:
+            logging.error(f"Error from {url}: {response.status_code} - {response.text}")
+            return f"Error from {url}: {response.status_code} - {response.text}"
+
     except Exception as e:
+        logging.error(f"Error calling agent at {url}: {e}")
         return f"Error calling agent: {e}"
 
 @app.route('/execute', methods=['POST'])
@@ -41,10 +49,13 @@ def execute():
 
     logging.info(f"User Goal: {user_goal}")
     
+    # Send the user's goal to the PM Agent to deconstruct
     pm_response = call_agent(PM_AGENT_URL, f"Deconstruct this goal: {user_goal}")
     logging.info(f"PM-Agent response:\n{pm_response}")
 
     results = {}
+    
+    # Process the PM-Agent's response and assign tasks to agents
     for line in pm_response.split("\n"):
         taskfound = False
         for agent_name, url in AGENT_ENDPOINTS.items():
@@ -53,6 +64,7 @@ def execute():
                 logging.info(f"Routing to {agent_name} → Task: {subtask}")
                 results[agent_name] = call_agent(url, subtask)
                 taskfound = True 
+        
         if not taskfound:
             logging.warning(f"No agent found for task: {line.strip()}")
             results["Unassigned"] = line.strip()
