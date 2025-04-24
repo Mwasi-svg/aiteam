@@ -1,1 +1,1 @@
-web: gunicorn brain:app
+web: python brain:app
