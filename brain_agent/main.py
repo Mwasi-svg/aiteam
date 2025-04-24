@@ -26,6 +26,46 @@ AGENT_ENDPOINTS = {
 
 PM_AGENT_URL = "https://project-manager-agent.onrender.com/run"
 
+def is_agent_awake(url):
+    """
+    Check if the agent is awake by sending a simple GET request.
+    Returns True if the agent responds, False otherwise.
+    """
+    try:
+        response = requests.get(url, timeout=10)
+        # If the status code is 200, we assume the agent is awake.
+        if response.status_code == 200:
+            logging.info(f"Agent at {url} is awake.")
+            return True
+        else:
+            logging.warning(f"Agent at {url} responded with {response.status_code}.")
+            return False
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error checking agent status at {url}: {e}")
+        return False
+
+def wake_and_call_agent(full_url, task):
+    """
+    This function will wake up the agent if it's asleep (i.e., no response from the GET request),
+    wait for the agent to fully wake up, and then send the task.
+    """
+    base_url = full_url.replace("/run", "")  # Extract the base URL of the agent
+    if not is_agent_awake(base_url):
+        try:
+            logging.info(f"Waking agent at {base_url}...")
+            requests.get(base_url)  # Wake the Render service by sending a GET request
+            logging.info("Sleeping 65 seconds to ensure full wake-up...")
+            time.sleep(65)  # Wait for 65 seconds before sending the task
+        except Exception as e:
+            logging.error(f"Error waking the agent at {base_url}: {e}")
+            return {
+                "result": f"Wake error: {e}",
+                "status": "error"
+            }
+
+    # After waiting, send the task to the agent
+    return call_agent(full_url, task)
+
 def call_agent(url, task):
     try:
         logging.info(f"Sending task to {url} with task: {task}")
@@ -78,7 +118,11 @@ def execute():
             if agent_name.lower() in line.lower():
                 subtask = line.split("→")[-1].strip() if "→" in line else line.strip()
                 logging.info(f"Routing to {agent_name} → Task: {subtask}")
-                results[agent_name] = call_agent(url, subtask)
+                # Use wake_and_call_agent instead of call_agent for agents on Render
+                if "render.com" in url:
+                    results[agent_name] = wake_and_call_agent(url, subtask)
+                else:
+                    results[agent_name] = call_agent(url, subtask)
                 taskfound = True
 
         if not taskfound:
