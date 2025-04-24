@@ -3,6 +3,7 @@ import logging
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import google.generativeai as genai
+import time
 
 load_dotenv()
 genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
@@ -46,7 +47,7 @@ def run():
     return jsonify({"result": result})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Use the port specified by Railway
+    port = int(os.environ.get("PORT", 5003))  # Use the port specified by Railway
     logging.info(f"Starting the app on port {port}")
     time.sleep(3)  # Wait for 3 seconds to ensure Railway is ready
     app.run(host="0.0.0.0", port=port)
