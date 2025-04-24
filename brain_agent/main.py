@@ -13,12 +13,12 @@ logging.basicConfig(level=logging.INFO)
 
 # Agent endpoint map (from Railway ENV VARs)
 AGENT_ENDPOINTS = {
-    "Market Research": os.getenv("MARKET_AGENT_URL"),
-    "Dev": os.getenv("DEV_AGENT_URL"),
-    "Design": os.getenv("DESIGN_AGENT_URL"),
-    "Analysis": os.getenv("ANALYSIS_AGENT_URL"),
-    "Trend": os.getenv("TREND_AGENT_URL"),
-    "Content Creation": os.getenv("CONTENT_AGENT_URL"),
+    "Market Research": os.getenv("https://market-agent-f9q2.onrender.com"),
+    "Dev": os.getenv("https://dev-agent-ai-agents.up.railway.app/"),
+    "Design": os.getenv("https://design-agent-ai-agents.up.railway.app/"),
+    "Analysis": os.getenv("https://analysis-agent-ai-agents.up.railway.app/"),
+    "Trend": os.getenv("https://trend-agent.onrender.com"),
+    "Content Creation": os.getenv("https://content-agent-ai-agents.up.railway.app/"),
 }
 
 PM_AGENT_URL = os.getenv("PM_AGENT_URL")
