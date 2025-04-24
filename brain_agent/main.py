@@ -10,7 +10,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Enable CORS for the frontend URL
-CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")  # Frontend URL
+CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,26 +24,39 @@ AGENT_ENDPOINTS = {
     "Content Creation": "https://content-agent-ai-agents.up.railway.app/",
 }
 
-# Adjusted for '/run' if needed
 PM_AGENT_URL = "https://project-manager-agent.onrender.com/run"
 
 def call_agent(url, task):
     try:
-        logging.info(f"Sending task to {url}")
-        response = requests.post(url, json={"task": task})
-        
+        logging.info(f"Sending task to {url} with task: {task}")
+        response = requests.post(url, json={"task": task}, timeout=120)
+
         if response.status_code == 200:
-            try:
-                return response.json().get("result", "No result returned.")
-            except ValueError:  # Catch non-JSON responses
-                return f"Non-JSON response from {url}: {response.text}"
+            logging.info(f"Received response from {url}: {response.json()}")
+            return {
+                "result": response.json().get("result", "No result returned."),
+                "status": "success"
+            }
         else:
             logging.error(f"Error from {url}: {response.status_code} - {response.text}")
-            return f"Error from {url}: {response.status_code} - {response.text}"
+            return {
+                "result": f"Error from {url}: {response.status_code} - {response.text}",
+                "status": "error"
+            }
+
+    except requests.exceptions.Timeout:
+        logging.error(f"Timeout while calling {url} for task: {task}")
+        return {
+            "result": "Timeout error: The agent took too long to respond.",
+            "status": "timeout"
+        }
 
     except Exception as e:
-        logging.error(f"Error calling agent at {url}: {e}")
-        return f"Error calling agent: {e}"
+        logging.error(f"Error calling agent at {url} for task: {task}: {e}")
+        return {
+            "result": f"Error calling agent: {e}",
+            "status": "error"
+        }
 
 @app.route('/execute', methods=['POST'])
 def execute():
@@ -52,31 +65,32 @@ def execute():
         return jsonify({"error": "No goal provided"}), 400
 
     logging.info(f"User Goal: {user_goal}")
-    
-    # Send the user's goal to the PM Agent to deconstruct
+
     pm_response = call_agent(PM_AGENT_URL, f"Deconstruct this goal: {user_goal}")
-    logging.info(f"PM-Agent response:\n{pm_response}")
+    logging.info(f"PM-Agent response:\n{pm_response['result']}")
 
     results = {}
-    
-    # Process the PM-Agent's response and assign tasks to agents
-    for line in pm_response.split("\n"):
+
+    for line in pm_response["result"].split("\n"):
         taskfound = False
-        logging.info(f"Processing line: {line.strip()}")  # Log each line from the PM-Agent
+        logging.info(f"Processing line: {line.strip()}")
         for agent_name, url in AGENT_ENDPOINTS.items():
             if agent_name.lower() in line.lower():
                 subtask = line.split("→")[-1].strip() if "→" in line else line.strip()
                 logging.info(f"Routing to {agent_name} → Task: {subtask}")
                 results[agent_name] = call_agent(url, subtask)
-                taskfound = True 
-        
+                taskfound = True
+
         if not taskfound:
             logging.warning(f"No agent found for task: {line.strip()}")
-            results["Unassigned"] = line.strip()
+            results["Unassigned"] = {
+                "result": line.strip(),
+                "status": "unassigned"
+            }
 
     return jsonify({
         "goal": user_goal,
-        "plan": pm_response,
+        "plan": pm_response["result"],
         "agent_responses": results
     })
 
@@ -85,7 +99,7 @@ def index():
     return "Brain Agent is running!"
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5004))  # Use the port specified by Railway
+    port = int(os.environ.get("PORT", 5004))
     logging.info(f"Starting the app on port {port}")
-    time.sleep(1)  # Reduced sleep time or removal (if you confirm it's not needed)
+    time.sleep(1)
     app.run(host="0.0.0.0", port=port)
