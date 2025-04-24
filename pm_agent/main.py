@@ -6,7 +6,7 @@ import google.generativeai as genai
 
 # Load environment variables from .env
 load_dotenv()
-genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)

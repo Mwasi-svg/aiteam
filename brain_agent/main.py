@@ -21,7 +21,7 @@ AGENT_ENDPOINTS = {
     "Content Creation": os.getenv("https://content-agent-ai-agents.up.railway.app/"),
 }
 
-PM_AGENT_URL = os.getenv("PM_AGENT_URL")
+PM_AGENT_URL = os.getenv("https://project-manager-agent.onrender.com")
 
 def call_agent(url, task):
     try:
