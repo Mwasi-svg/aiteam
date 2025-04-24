@@ -46,6 +46,10 @@ def run():
     result = ask_gemini(prompt)
     return jsonify({"result": result})
 
+@app.route("/")
+def index():
+    return "Design-Agent is running!"
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5003))  # Use the port specified by Railway
     logging.info(f"Starting the app on port {port}")
