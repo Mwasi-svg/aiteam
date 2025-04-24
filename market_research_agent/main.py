@@ -2,13 +2,19 @@ import os
 import logging
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
+from flask_cors import CORS  # Import CORS for cross-origin requests
 import google.generativeai as genai
+import time
 
 load_dotenv()
-genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
+genai.configure(api_key="AIzaSyC_nRKjOy12gBNdRjGS6UeXm3xr81kGIPw")
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
+
+# Enable CORS for the frontend URL
+CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")  # Frontend URL
+
 
 SYSTEM_INSTRUCTION = """
 Role: Market Research Agent

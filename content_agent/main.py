@@ -7,7 +7,7 @@ from flask_cors import CORS  # Import CORS for cross-origin requests
 import time
 
 load_dotenv()
-genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
+genai.configure(api_key="AIzaSyC_nRKjOy12gBNdRjGS6UeXm3xr81kGIPw")
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
