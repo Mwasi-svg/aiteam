@@ -8,6 +8,7 @@ import time
 
 load_dotenv()
 app = Flask(__name__)
+
 # Enable CORS for the frontend URL
 CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")  # Frontend URL
 
@@ -23,16 +24,19 @@ AGENT_ENDPOINTS = {
     "Content Creation": "https://content-agent-ai-agents.up.railway.app/",
 }
 
-PM_AGENT_URL = "https://project-manager-agent.onrender.com"
+# Adjusted for '/run' if needed
+PM_AGENT_URL = "https://project-manager-agent.onrender.com/run"
 
 def call_agent(url, task):
     try:
         logging.info(f"Sending task to {url}")
         response = requests.post(url, json={"task": task})
         
-        # Check if the response is successful
         if response.status_code == 200:
-            return response.json().get("result", "No result returned.")
+            try:
+                return response.json().get("result", "No result returned.")
+            except ValueError:  # Catch non-JSON responses
+                return f"Non-JSON response from {url}: {response.text}"
         else:
             logging.error(f"Error from {url}: {response.status_code} - {response.text}")
             return f"Error from {url}: {response.status_code} - {response.text}"
@@ -58,6 +62,7 @@ def execute():
     # Process the PM-Agent's response and assign tasks to agents
     for line in pm_response.split("\n"):
         taskfound = False
+        logging.info(f"Processing line: {line.strip()}")  # Log each line from the PM-Agent
         for agent_name, url in AGENT_ENDPOINTS.items():
             if agent_name.lower() in line.lower():
                 subtask = line.split("→")[-1].strip() if "→" in line else line.strip()
@@ -82,5 +87,5 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5004))  # Use the port specified by Railway
     logging.info(f"Starting the app on port {port}")
-    time.sleep(3)  # Wait for 3 seconds to ensure Railway is ready
+    time.sleep(1)  # Reduced sleep time or removal (if you confirm it's not needed)
     app.run(host="0.0.0.0", port=port)
