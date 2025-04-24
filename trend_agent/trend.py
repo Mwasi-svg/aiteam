@@ -4,13 +4,17 @@ from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import google.generativeai as genai
 
+# Load environment variables from .env
 load_dotenv()
-genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
+genai.configure(api_key=os.getenv("GENAI_API_KEY"))
 
+# Logging setup
 logging.basicConfig(level=logging.INFO)
 
+# Flask app initialization
 app = Flask(__name__)
 
+# System instruction for the Trend-Agent
 SYSTEM_INSTRUCTION = """
 Role: Trend-Agent
 
@@ -32,6 +36,12 @@ def ask_gemini(prompt):
         logging.error(f"Gemini error: {e}")
         return f"Error: {e}"
 
+# Root route for basic info
+@app.route('/')
+def home():
+    return "Welcome to the Trend-Agent API. Use POST at /run to scan for trends."
+
+# API endpoint to run tasks
 @app.route('/run', methods=['POST'])
 def run():
     task = request.json.get("task", "")
@@ -47,5 +57,8 @@ def run():
     result = ask_gemini(prompt)
     return jsonify({"result": result})
 
+# Run the Flask app
 if __name__ == "__main__":
-    app.run(port=5005)
+    logging.info("Trend-Agent is up and running...")
+    port = int(os.environ.get("PORT", 5005))  # Use environment port or fallback to 5005
+    app.run(host='0.0.0.0', port=port)
