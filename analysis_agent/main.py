@@ -6,7 +6,7 @@ import google.generativeai as genai
 import time
 
 load_dotenv()
-genai.configure(api_key="YOUR_API_KEY")
+genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
