@@ -4,6 +4,7 @@ import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+import time
 
 load_dotenv()
 app = Flask(__name__)
@@ -59,6 +60,10 @@ def execute():
         "plan": pm_response,
         "agent_responses": results
     })
+
+@app.route("/")
+def index():
+    return "Brain Agent is running!"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))  # Use the port specified by Railway
