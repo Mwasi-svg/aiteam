@@ -61,5 +61,5 @@ def run():
 # Run the Flask app
 if __name__ == "__main__":
     logging.info("Trend-Agent is up and running...")
-    port = int(os.environ.get("PORT", 5005))  # Use environment port or fallback to 5005
+    port = int(os.environ.get("PORT", 5003))  # Use environment port or fallback to 5005
     app.run(host='0.0.0.0', port=port)
