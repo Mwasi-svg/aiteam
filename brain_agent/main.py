@@ -16,12 +16,12 @@ logging.basicConfig(level=logging.INFO)
 
 # Agent endpoint map (from Railway ENV VARs)
 AGENT_ENDPOINTS = {
-    "Market Research": "https://market-agent-f9q2.onrender.com",
-    "Dev": "https://dev-agent-ai-agents.up.railway.app/",
-    "Design": "https://design-agent-ai-agents.up.railway.app/",
-    "Analysis": "https://analysis-agent-ai-agents.up.railway.app/",
-    "Trend": "https://trend-agent.onrender.com",
-    "Content Creation": "https://content-agent-ai-agents.up.railway.app/",
+    "Market Research": "https://market-agent-f9q2.onrender.com/run",
+    "Dev": "https://dev-agent-ai-agents.up.railway.app/run",
+    "Design": "https://design-agent-ai-agents.up.railway.app/run",
+    "Analysis": "https://analysis-agent-ai-agents.up.railway.app/run",
+    "Trend": "https://trend-agent.onrender.com/run",
+    "Content Creation": "https://content-agent-ai-agents.up.railway.app/run",
 }
 
 PM_AGENT_URL = "https://project-manager-agent.onrender.com/run"
