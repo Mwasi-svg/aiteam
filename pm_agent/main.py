@@ -61,26 +61,7 @@ Core Responsibilities:
     - Maintain clear and concise communication with the user throughout the process.
     - Provide updates on task progress and any significant findings or changes in direction.
 """
-# Function to list available models
-def list_available_models():
-    try:
-        models = genai.ListModels()
-        logging.info(f"Available models: {models}")
-        return models
-    except Exception as e:
-        logging.error(f"Error listing models: {e}")
-        return None
 
-# Fetch available models and log the result
-available_models = list_available_models()
-
-# Check if models are available and log the result
-if available_models:
-    logging.info(f"Available models: {available_models}")
-else:
-    logging.error("No models found.")
-
-# Gemini interaction function
 def ask_gemini(prompt):
     try:
         model = genai.GenerativeModel("gemini-1.5-pro-latest")

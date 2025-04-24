@@ -22,24 +22,6 @@ Core Functions:
 - Predict potential virality or saturation points.
 - Recommend trend-based opportunities.
 """
-# Function to list available models
-def list_available_models():
-    try:
-        models = genai.ListModels()
-        logging.info(f"Available models: {models}")
-        return models
-    except Exception as e:
-        logging.error(f"Error listing models: {e}")
-        return None
-
-# Fetch available models and log the result
-available_models = list_available_models()
-
-# Check if models are available and log the result
-if available_models:
-    logging.info(f"Available models: {available_models}")
-else:
-    logging.error("No models found.")
 
 def ask_gemini(prompt):
     try:
