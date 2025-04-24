@@ -3,6 +3,7 @@ import logging
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import google.generativeai as genai
+from flask_cors import CORS  # Import CORS
 
 # Load environment variables from .env
 load_dotenv()
@@ -13,6 +14,9 @@ logging.basicConfig(level=logging.INFO)
 
 # Flask app initialization
 app = Flask(__name__)
+
+# Enable CORS for the frontend URL
+CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")  # Frontend URL
 
 # System instruction for the PM agent
 SYSTEM_INSTRUCTION = """

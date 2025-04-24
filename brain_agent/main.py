@@ -8,7 +8,9 @@ import time
 
 load_dotenv()
 app = Flask(__name__)
-CORS(app, origins=["https://turiagent.web.app"])
+# Enable CORS for the frontend URL
+CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")  # Frontend URL
+
 logging.basicConfig(level=logging.INFO)
 
 # Agent endpoint map (from Railway ENV VARs)
