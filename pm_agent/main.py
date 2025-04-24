@@ -3,7 +3,7 @@ import logging
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 import google.generativeai as genai
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 import time
 
 # Load environment variables from .env
@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 # Enable CORS for the frontend URL
-CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")  # Frontend URL
+CORS(app, origins="https://9000-idx-admin-dashboard-1745483841791.cluster-oayqgyglpfgseqclbygurw4xd4.cloudworkstations.dev")
 
 # System instruction for the PM agent
 SYSTEM_INSTRUCTION = """
@@ -41,8 +41,6 @@ Core Responsibilities:
      • **Trend-Agent** → Monitor and analyze real-time trends for insights into market movements.
      • **Content Creation-Agent** → Generate posts, scripts, captions, and other marketing content.
 
-   - Assign these subtasks to the appropriate agents based on the user’s task description.
-
 3. Oversight & Workflow Management:
    - Maintain high-level oversight of all agents’ tasks and progress.
    - Respect task dependencies, ensuring that earlier tasks (e.g., market research) are completed before later tasks (e.g., content creation).
@@ -62,9 +60,10 @@ Core Responsibilities:
 7. Final Reporting:
    - Compile and synthesize all agent outputs into a comprehensive, structured final report for the user.
    - Ensure that the final response aligns with the user’s original goal.
+
 8. User Communication:
-    - Maintain clear and concise communication with the user throughout the process.
-    - Provide updates on task progress and any significant findings or changes in direction.
+   - Maintain clear and concise communication with the user throughout the process.
+   - Provide updates on task progress and any significant findings or changes in direction.
 """
 
 def ask_gemini(prompt):
@@ -79,12 +78,10 @@ def ask_gemini(prompt):
         logging.error(f"General error: {e}")
         return f"Error generating response: {e}"
 
-# Root route
 @app.route('/')
 def home():
     return "Welcome to the Professional Prompt Engineer & AI Project Manager API. Use POST at /run to delegate tasks."
 
-# API endpoint to run tasks
 @app.route('/run', methods=['POST'])
 def run():
     task = request.json.get("task", "")
@@ -92,26 +89,33 @@ def run():
         return jsonify({"error": "No task provided"}), 400
 
     logging.info(f"Received PM task: {task}")
+
     prompt = f"""
-    {SYSTEM_INSTRUCTION.strip()}
+{SYSTEM_INSTRUCTION.strip()}
 
-    User Task: {task}
+Your task:
+Analyze the user’s request and create a task delegation plan for the following agents:
+- Market Research Agent
+- Developer-Agent
+- Designer-Agent
+- Analysis-Agent
+- Trend-Agent
+- Content Creation-Agent
 
-    ### Task Delegation ###
-    1. **Market Research Agent**: Gather information about the target audience and market trends.
-    2. **Dev-Agent**: Develop any necessary tools or code for the campaign.
-    3. **Design-Agent**: Create visual content for the social media campaign (images, banners, etc.).
-    4. **Analysis-Agent**: Analyze the results of the campaign once live.
-    5. **Trend-Agent**: Monitor current trends and virality patterns for the AI tool.
-    6. **Content Creation-Agent**: Generate posts, captions, and scripts for social media content.
+Respond using this format:
+**[Agent Name]** → [What that agent should do]
 
-    Now, delegate these tasks and provide a detailed plan.
-    """
+Only delegate tasks that are relevant to the user's request. Avoid unnecessary agents.
+
+User Request:
+{task}
+"""
+
     result = ask_gemini(prompt)
     return jsonify({"result": result})
 
-# Run the Flask app
 if __name__ == "__main__":
     logging.info("PM Agent is up and running...")
-    port = int(os.environ.get("PORT", 5000))  # Use environment port or fallback to 5000
+    port = int(os.environ.get("PORT", 5000))
+    time.sleep(1)
     app.run(host='0.0.0.0', port=port)

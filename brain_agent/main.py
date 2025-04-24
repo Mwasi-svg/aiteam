@@ -15,15 +15,15 @@ logging.basicConfig(level=logging.INFO)
 
 # Agent endpoint map (from Railway ENV VARs)
 AGENT_ENDPOINTS = {
-    "Market Research": os.getenv("https://market-agent-f9q2.onrender.com"),
-    "Dev": os.getenv("https://dev-agent-ai-agents.up.railway.app/"),
-    "Design": os.getenv("https://design-agent-ai-agents.up.railway.app/"),
-    "Analysis": os.getenv("https://analysis-agent-ai-agents.up.railway.app/"),
-    "Trend": os.getenv("https://trend-agent.onrender.com"),
-    "Content Creation": os.getenv("https://content-agent-ai-agents.up.railway.app/"),
+    "Market Research": "https://market-agent-f9q2.onrender.com",
+    "Dev": "https://dev-agent-ai-agents.up.railway.app/",
+    "Design": "https://design-agent-ai-agents.up.railway.app/",
+    "Analysis":"https://analysis-agent-ai-agents.up.railway.app/",
+    "Trend": "https://trend-agent.onrender.com",
+    "Content Creation": "https://content-agent-ai-agents.up.railway.app/",
 }
 
-PM_AGENT_URL = os.getenv("https://project-manager-agent.onrender.com")
+PM_AGENT_URL = "https://project-manager-agent.onrender.com"
 
 def call_agent(url, task):
     try:
