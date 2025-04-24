@@ -46,5 +46,12 @@ def run():
     result = ask_gemini(prompt)
     return jsonify({"result": result})
 
+@app.route("/")
+def index():
+    return "Dev-Agent is running!"
+
 if __name__ == "__main__":
-    app.run(port=5002)
+    port = int(os.environ.get("PORT", 8080))  # Use the port specified by Railway
+    logging.info(f"Starting the app on port {port}")
+    time.sleep(3)  # Wait for 3 seconds to ensure Railway is ready
+    app.run(host="0.0.0.0", port=port)
