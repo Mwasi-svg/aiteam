@@ -6,7 +6,7 @@ import google.generativeai as genai
 
 # Load environment variables from .env
 load_dotenv()
-genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
+genai.configure(api_key=os.getenv("GENAI_API_KEY"))
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
@@ -73,6 +73,12 @@ def ask_gemini(prompt):
     except Exception as e:
         logging.error(f"General error: {e}")
         return f"Error generating response: {e}"
+
+# Root route
+@app.route('/')
+def home():
+    return "Welcome to the Professional Prompt Engineer & AI Project Manager API. Use POST at /run to delegate tasks."
+
 # API endpoint to run tasks
 @app.route('/run', methods=['POST'])
 def run():
@@ -101,4 +107,6 @@ def run():
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(port=5000)
+    logging.info("PM Agent is up and running...")
+    port = int(os.environ.get("PORT", 5000))  # Use environment port or fallback to 5000
+    app.run(host='0.0.0.0', port=port)
