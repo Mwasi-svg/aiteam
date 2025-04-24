@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 load_dotenv()
-genai.configure(api_key="AIzaSyCMU7c9xh3O8hOCgHZiR6jyjK1cX7-Qfy8")
+genai.configure(api_key=os.getenv("GENAI_API_KEY"))
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -28,12 +28,16 @@ def ask_gemini(prompt):
         response = model.generate_content(prompt)
         if hasattr(response, 'text') and response.text:
             return response.text.strip()
-        else:  
+        else:
             logging.error("Empty response from Gemini.")
             return "Warning: Empty response from Gemini."
     except Exception as e:
         logging.error(f"Gemini error: {e}")
         return f"Error: {e}"
+
+@app.route('/')
+def home():
+    return "Welcome to the Market Research Agent API. Use POST at /run to request market research."
 
 @app.route('/run', methods=['POST'])
 def run():
@@ -51,4 +55,6 @@ def run():
     return jsonify({"result": result})
 
 if __name__ == "__main__":
-    app.run(port=5001)
+    logging.info("Market Research Agent is up and running...")
+    port = int(os.environ.get("PORT", 5001))  # Use environment port or fallback to 5001
+    app.run(host='0.0.0.0', port=port)
