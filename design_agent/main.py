@@ -51,7 +51,7 @@ def index():
     return "Design-Agent is running!"
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5003))  # Use the port specified by Railway
+    port = int(os.environ.get("PORT", 8080))  # Use the port specified by Railway
     logging.info(f"Starting the app on port {port}")
     time.sleep(3)  # Wait for 3 seconds to ensure Railway is ready
     app.run(host="0.0.0.0", port=port)
