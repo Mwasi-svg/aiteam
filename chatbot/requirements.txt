@@ -1,0 +1,5 @@
+Flask
+flask-cors==5.0.1
+python-dotenv
+google-generativeai
+gunicorn
